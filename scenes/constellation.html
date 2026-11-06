@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>办公大厅 · 星系 — OyVerse</title>
+<script>(function(){var q=new URLSearchParams(location.search).get('theme');var t=q==='dark'||q==='light'?q:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t;})();</script>
+<style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+ --bg:#F3F1EC;--bg2:#FBFAF7;--ink:#17171A;--ink2:#55555E;--ink3:#8C8C96;--line:rgba(20,20,30,.08);
+ --glass:rgba(255,255,255,.62);--glass2:rgba(255,255,255,.78);--gline:rgba(255,255,255,.9);--shadow:0 20px 60px -24px rgba(40,34,20,.28),0 2px 8px -2px rgba(40,34,20,.08);
+ --gold:#E9A82B;--amber:#F5A524;--red:#F0443A;--green:#2FB566;--chip:rgba(255,255,255,.72);--chipline:rgba(20,20,30,.08);--you:#17171A;--youInk:#fff;
+ --disc1:#FFF8E6;--disc2:#FFE3A1;--disc3:rgba(245,184,61,.0);--seg:rgba(20,20,30,.05);--segOn:#fff}
+[data-theme=dark]{--bg:#05060A;--bg2:#0A0C13;--ink:#F2F1EE;--ink2:#A9A9B4;--ink3:#6E6E7A;--line:rgba(255,255,255,.07);
+ --glass:rgba(18,20,28,.56);--glass2:rgba(26,28,38,.78);--gline:rgba(255,255,255,.08);--shadow:0 30px 80px -30px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.04);
+ --chip:rgba(22,24,34,.72);--chipline:rgba(255,255,255,.09);--you:#F2F1EE;--youInk:#111;
+ --disc1:#FFF6DC;--disc2:#F7C35A;--seg:rgba(255,255,255,.06);--segOn:rgba(255,255,255,.14)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font:14px/1.5 var(--font);color:var(--ink);background:var(--bg);overflow:hidden;-webkit-font-smoothing:antialiased;transition:background .5s,color .5s}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+svg{display:block}
+.top{position:relative;z-index:20;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 18px 0 22px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4)}
+.brand{display:flex;align-items:center;gap:9px;font-weight:650;font-size:16px;letter-spacing:-.01em}
+.brand svg{width:22px;height:22px}
+.spaces{position:absolute;left:50%;transform:translateX(-50%);display:flex;padding:3px;border-radius:11px;background:var(--seg)}
+.spaces button{height:30px;padding:0 16px;border-radius:8px;font-size:13px;color:var(--ink2);transition:color .2s,background .2s}
+.spaces button:hover{color:var(--ink)}
+.spaces button.on{background:var(--segOn);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08),0 0 0 .5px rgba(0,0,0,.04)}
+.theme{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:var(--ink2);transition:background .2s,color .2s}
+.theme:hover{background:var(--seg);color:var(--ink)}
+.theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;grid-area:1/1;transition:opacity .35s,transform .5s cubic-bezier(.3,1.6,.5,1)}
+.theme .moon{fill:currentColor;stroke:none}
+[data-theme=light] .sun,[data-theme=dark] .moon{opacity:0;transform:rotate(-60deg) scale(.6)}
+.main{position:relative;height:calc(100vh - 56px);height:calc(100dvh - 56px);display:grid;grid-template-columns:1fr 404px;overflow:hidden}
+#web,#fx{position:absolute;left:0;top:0;pointer-events:none}
+#web{z-index:0}#fx{z-index:8}
+.stage{position:relative;z-index:2;min-width:0}
+.stage-head{position:absolute;left:28px;top:22px;z-index:6;pointer-events:none}
+.stage-head h1{font-size:22px;font-weight:680;letter-spacing:-.02em}
+.stage-head p{margin-top:3px;font-size:13px;color:var(--ink2)}
+.stage-head p b{font-weight:600}
+.legend{position:absolute;left:28px;bottom:20px;display:flex;gap:18px;font-size:11.5px;color:var(--ink3);pointer-events:none}
+.legend span{display:flex;align-items:center;gap:7px}
+.lg-comet{width:22px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--gold));position:relative}
+.lg-comet:after{content:"";position:absolute;right:-2px;top:-2px;width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold)}
+.lg-fil{width:22px;height:3px;border-radius:3px;background:linear-gradient(90deg,#2FB566,#0A84FF);opacity:.75}
+/* core */
+.core{position:absolute;z-index:3;transform:translate(-50%,-50%);pointer-events:none}
+.disc{position:relative;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,var(--disc1) 0%,var(--disc2) 62%,#F0A92E 100%);box-shadow:0 0 0 1px rgba(255,236,190,.6) inset,0 0 40px 6px rgba(245,184,61,.38),0 0 120px 30px rgba(245,184,61,.16);transition:transform .6s cubic-bezier(.3,1.7,.5,1)}
+[data-theme=light] .disc{box-shadow:0 0 0 1px rgba(255,255,255,.9) inset,0 16px 40px -12px rgba(200,130,20,.45),0 0 80px 10px rgba(245,184,61,.22)}
+.disc.pulse{transform:scale(1.08)}
+.aura{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(245,184,61,.45);transform:scale(1);animation:aura 6s cubic-bezier(.2,.6,.3,1) infinite;opacity:0}
+.aura.a2{animation-delay:3s}
+@keyframes aura{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+.core-label{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:12px;text-align:center;white-space:nowrap}
+.core-label b{display:block;font-size:13.5px;font-weight:650}
+.core-label span{font-size:11.5px;color:var(--ink2);transition:color .3s}
+.core-label span.hot{color:var(--gold)}
+/* stations */
+.st{position:absolute;z-index:4;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;pointer-events:auto}
+.st-ic{--c:#888;--g:0;position:relative;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:var(--chip);border:1px solid var(--chipline);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:var(--ink2);transition:color .4s,border-color .4s,box-shadow .6s,transform .5s cubic-bezier(.3,1.7,.5,1);box-shadow:0 0 calc(var(--g)*26px) calc(var(--g)*2px) color-mix(in srgb,var(--c) calc(var(--g)*70%),transparent)}
+.st-ic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.st.used .st-ic{color:var(--ink);border-color:color-mix(in srgb,var(--c) 45%,var(--chipline))}
+.st.hit .st-ic{transform:scale(1.16)}
+.st-ic:after{content:"";position:absolute;inset:-1px;border-radius:13px;border:1.5px solid var(--c);opacity:0}
+.st.hit .st-ic:after{animation:ring .9s cubic-bezier(.2,.7,.3,1)}
+@keyframes ring{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.7)}}
+.st-lb{margin-top:6px;font-size:12px;font-weight:560;white-space:nowrap;color:var(--ink)}
+.st-hint{font-size:10.5px;color:var(--ink3);white-space:nowrap}
+.st-n{position:absolute;right:-7px;top:-7px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;font-size:10px;font-weight:650;line-height:17px;text-align:center;background:var(--c);color:var(--nk,#fff);opacity:0;transform:scale(.4);transition:opacity .3s,transform .5s cubic-bezier(.3,1.8,.5,1)}
+.st.used .st-n{opacity:1;transform:scale(1)}
+.st.lab-up{flex-direction:column-reverse}.st.lab-up .st-lb{margin:0 0 6px}
+/* bots */
+.bot{--c:#888;position:absolute;left:0;top:0;z-index:5;will-change:transform;cursor:pointer}
+.bot-in{position:relative;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center}
+.bot-body{position:relative;transition:filter .5s,opacity .5s}
+.bot-halo{position:absolute;left:50%;top:50%;width:150%;height:150%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--c) 34%,transparent) 0%,transparent 66%);opacity:.7;transition:opacity .5s;pointer-events:none}
+.bot.idle .bot-halo{opacity:.32}.bot.paused .bot-halo{opacity:0}
+.bot-name{margin-top:4px;display:flex;align-items:center;gap:5px;padding:2px 8px 2px 6px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--chip);border:1px solid var(--chipline);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.bot-name i{width:6px;height:6px;border-radius:50%;background:var(--ink3)}
+.bot.working .bot-name i{background:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 22%,transparent)}
+.bot.waiting .bot-name i{background:var(--amber)}
+.bot.error .bot-name i{background:var(--red)}
+.bot-name em{font-style:normal;font-weight:500;font-size:11px;color:var(--ink2)}
+.bot.waiting .bot-name em{color:var(--amber)}.bot.error .bot-name em{color:var(--red)}
+.beacon{position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;border-radius:50%;pointer-events:none;opacity:0}
+.bot.waiting .beacon{opacity:1;border:2px solid var(--amber);animation:beacon 1.8s cubic-bezier(.2,.6,.3,1) infinite}
+.bot.waiting .beacon.b2{animation-delay:.9s}
+@keyframes beacon{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+.bot.waiting .flag{opacity:1;transform:translate(-50%,0) scale(1)}
+.flag{position:absolute;left:50%;bottom:100%;margin-bottom:2px;transform:translate(-50%,6px) scale(.6);opacity:0;padding:1px 7px;border-radius:10px;background:var(--amber);color:#2A1A00;font-size:10.5px;font-weight:650;white-space:nowrap;transition:opacity .3s,transform .5s cubic-bezier(.3,1.8,.5,1);box-shadow:0 0 18px rgba(245,165,36,.6)}
+.bot.error .bot-body{animation:flicker 2.6s steps(1) infinite}
+.bot.error .beacon{opacity:1;border:1.5px solid var(--red);animation:redfl 2.6s steps(1) infinite}
+@keyframes flicker{0%,100%{opacity:1}8%{opacity:.35}10%{opacity:.9}13%{opacity:.25}16%{opacity:1}55%{opacity:1}57%{opacity:.4}60%{opacity:1}}
+@keyframes redfl{0%,100%{opacity:.85;box-shadow:0 0 22px rgba(240,68,58,.5)}8%{opacity:.1}10%{opacity:.7}13%{opacity:0}16%{opacity:.85}57%{opacity:.2}60%{opacity:.85}}
+.bot.paused .bot-body{filter:grayscale(.85);opacity:.5}
+.bot.paused .bot-name{opacity:.7}
+.bot.hover .bot-name{border-color:color-mix(in srgb,var(--c) 60%,transparent)}
+.bot-body.bump{animation:bump .7s cubic-bezier(.3,1.6,.5,1)}
+@keyframes bump{0%{transform:scale(1)}30%{transform:scale(1.14)}100%{transform:scale(1)}}
+/* hover card */
+.card{position:absolute;z-index:12;width:268px;padding:14px 16px 15px;border-radius:18px;background:var(--glass2);border:1px solid var(--gline);backdrop-filter:blur(24px) saturate(1.5);-webkit-backdrop-filter:blur(24px) saturate(1.5);box-shadow:var(--shadow);opacity:0;transform:scale(.94) translateY(4px);transform-origin:left center;transition:opacity .2s,transform .35s cubic-bezier(.3,1.5,.5,1);pointer-events:none}
+.card.show{opacity:1;transform:none;pointer-events:auto}
+.card.flip{transform-origin:right center}
+.c-top{display:flex;align-items:center;gap:8px}
+.c-top b{font-size:15px;font-weight:650}
+.c-top .model{font-size:11px;color:var(--ink3);padding:1px 6px;border-radius:6px;background:var(--seg)}
+.pill{margin-left:auto;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:10px;background:var(--seg);color:var(--ink2)}
+.pill.working{color:var(--green);background:color-mix(in srgb,var(--green) 13%,transparent)}
+.pill.waiting{color:#C77D00;background:color-mix(in srgb,var(--amber) 18%,transparent)}
+[data-theme=dark] .pill.waiting{color:var(--amber)}
+.pill.error{color:var(--red);background:color-mix(in srgb,var(--red) 14%,transparent)}
+.c-acc{margin-top:2px;font-size:12px;color:var(--ink2)}
+.c-sec{margin-top:11px}
+.c-k{font-size:11px;color:var(--ink3);margin-bottom:3px}
+.c-step{font-size:13px;line-height:1.45}
+.bar{height:5px;border-radius:5px;background:var(--seg);overflow:hidden;margin-top:5px}
+.bar i{display:block;height:100%;border-radius:5px;background:var(--c)}
+.c-row{display:flex;justify-content:space-between;font-size:12px}
+.c-row span:last-child{color:var(--ink2);font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chips span{font-size:11.5px;padding:2px 8px;border-radius:8px;background:color-mix(in srgb,var(--c) 12%,transparent);border:1px solid color-mix(in srgb,var(--c) 26%,transparent)}
+.chips span em{font-style:normal;color:var(--ink3);margin-left:3px;font-variant-numeric:tabular-nums}
+.chips .none{background:none;border:0;padding:0;color:var(--ink3)}
+/* panel */
+.panel{position:relative;z-index:6;margin:12px 12px 12px 0;display:flex;flex-direction:column;min-height:0;border-radius:24px;background:var(--glass);border:1px solid var(--gline);backdrop-filter:blur(28px) saturate(1.5);-webkit-backdrop-filter:blur(28px) saturate(1.5);box-shadow:var(--shadow);overflow:hidden}
+.p-head{display:flex;align-items:center;gap:11px;padding:16px 18px 14px;border-bottom:1px solid var(--line)}
+.p-head b{display:block;font-size:14.5px;font-weight:650}
+.p-head span{font-size:12px;color:var(--ink2)}
+.av{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;overflow:visible}
+.av.butler{background:radial-gradient(circle at 50% 42%,var(--disc1),var(--disc2) 70%,#F0A92E);box-shadow:0 0 14px rgba(245,184,61,.35)}
+.av.lg{width:38px;height:38px}
+.av.ab{background:color-mix(in srgb,var(--c) 14%,transparent)}
+.msgs{flex:1;min-height:0;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin}
+.m{display:flex;gap:9px;align-items:flex-end;animation:mIn .55s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes mIn{0%{opacity:0;transform:translateY(10px) scale(.97)}100%{opacity:1;transform:none}}
+.m.you{justify-content:flex-end}
+.m .who{font-size:11px;color:var(--ink3);margin:0 0 3px 2px;display:flex;gap:6px}
+.m .who em{font-style:normal;color:var(--ink3)}
+.bub{max-width:268px;padding:9px 13px;border-radius:17px 17px 17px 6px;background:var(--chip);border:1px solid var(--chipline);font-size:13.5px;line-height:1.55;word-break:break-word}
+.m.you .bub{background:var(--you);color:var(--youInk);border-color:transparent;border-radius:17px 17px 6px 17px}
+.m.mb .bub{border-color:color-mix(in srgb,var(--c) 30%,var(--chipline))}
+.relay{font-size:10.5px;color:var(--ink3);margin-top:3px;margin-left:2px}
+.confirm{margin-top:7px;padding:11px 12px 12px;border-radius:14px;border:1px solid color-mix(in srgb,var(--amber) 55%,transparent);background:color-mix(in srgb,var(--amber) 9%,var(--chip));max-width:268px;transition:border-color .4s,box-shadow .4s}
+.confirm.flash{box-shadow:0 0 0 4px color-mix(in srgb,var(--amber) 22%,transparent)}
+.confirm .cf-h{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#C77D00}
+[data-theme=dark] .confirm .cf-h{color:var(--amber)}
+.confirm .cf-h i{width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber)}
+.confirm .cf-t{margin:4px 0 2px;font-size:14px;font-weight:620}
+.confirm .cf-s{font-size:12px;color:var(--ink2)}
+.cf-b{display:flex;gap:8px;margin-top:10px}
+.cf-b button{height:30px;padding:0 14px;border-radius:9px;font-size:12.5px;font-weight:600;background:var(--seg);transition:transform .2s,background .2s}
+.cf-b button.go{background:var(--you);color:var(--youInk)}
+.cf-b button:active{transform:scale(.96)}
+.confirm.done{border-color:var(--line);background:var(--seg)}
+.confirm.done .cf-h{color:var(--ink3)}.confirm.done .cf-h i{background:var(--green);box-shadow:none}
+.live{flex:none;margin:0 12px;padding:10px 12px 8px;border-radius:16px;background:var(--seg)}
+.live-h{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:var(--ink2);margin-bottom:5px}
+.live-h i{width:6px;height:6px;border-radius:50%;background:var(--ink3);transition:background .3s,box-shadow .3s}
+.live-h i.on{background:var(--green);box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 22%,transparent)}
+.live ol{list-style:none;display:flex;flex-direction:column;gap:2px;height:118px;overflow:hidden}
+.live li{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:baseline;font-size:12px;line-height:22px;animation:lIn .5s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes lIn{0%{opacity:0;transform:translateY(-8px)}100%{opacity:1;transform:none}}
+.live li.empty{display:block;color:var(--ink3)}
+.live li .r{display:flex;align-items:center;gap:5px;font-weight:600;white-space:nowrap}
+.live li .r i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.live li .r svg{width:11px;height:11px;stroke:var(--ink3);fill:none;stroke-width:2}
+.live li .t{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.live li time{font-size:11px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.live li.k-ask .r{color:#C77D00}[data-theme=dark] .live li.k-ask .r{color:var(--amber)}
+.live li.k-error .r,.live li.k-error .t{color:var(--red)}
+.composer{flex:none;display:flex;gap:8px;padding:12px;align-items:center}
+.composer input{flex:1;min-width:0;height:42px;padding:0 15px;border-radius:14px;border:1px solid var(--chipline);background:var(--chip);outline:none;font-size:13.5px;transition:border-color .2s,box-shadow .2s}
+.composer input::placeholder{color:var(--ink3)}
+.composer input:focus{border-color:color-mix(in srgb,var(--gold) 70%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 18%,transparent)}
+.composer button{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--you);color:var(--youInk);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.composer button:active{transform:scale(.9)}
+.composer button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:760px){
+ body{overflow:auto}
+ .top{padding:0 10px 0 14px;position:sticky;top:0}
+ .brand span{display:none}
+ .spaces{position:static;transform:none}
+ .spaces button{padding:0 11px}
+ .main{display:flex;flex-direction:column;height:auto;overflow:visible}
+ .stage{height:600px;flex:none}
+ .stage-head{left:16px;top:14px}.stage-head h1{font-size:19px}.stage-head p{font-size:12px}
+ .legend{display:none}
+ .st-hint{display:none}.st-ic{width:34px;height:34px;border-radius:11px}.st-ic svg{width:17px;height:17px}.st-lb{font-size:11px;margin-top:4px}
+ .panel{margin:0 10px 12px;height:auto;min-height:0}
+ .msgs{max-height:none;overflow:visible}
+ .card{width:236px}
+}
+@media (prefers-reduced-motion:reduce){
+ *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+ .bot.waiting .beacon{opacity:.9;transform:scale(1.25)}
+ .bot.error .beacon{opacity:.85}
+}
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="10.2" ry="4.6" transform="rotate(-28 12 12)" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3.6" fill="currentColor"/><circle cx="20.4" cy="7.4" r="1.8" fill="#F5B83D"/></svg><span>OyVerse</span></div>
+ <nav class="spaces" aria-label="空间"><button class="on" aria-current="page">管家</button><button>自动化</button><button>运营</button><button>创作</button></nav>
+ <button class="theme" id="themeBtn" aria-label="切换日间或夜间"><svg class="moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg></button>
+</header>
+<main class="main" id="main">
+ <canvas id="web" aria-hidden="true"></canvas>
+ <section class="stage" id="stage" aria-label="团队星系">
+  <div class="stage-head"><h1>办公大厅</h1><p id="summary"></p></div>
+  <div class="core" id="core"><i class="aura"></i><i class="aura a2"></i><div class="disc"><div id="butler"></div></div><div class="core-label"><b>管家</b><span id="coreStatus">待命</span></div></div>
+  <div id="stations"></div>
+  <div id="bots"></div>
+  <div class="card" id="card" role="dialog" aria-live="polite"></div>
+  <div class="legend"><span><i class="lg-comet"></i>彗星：正在传递的指令、调用和汇报</span><span><i class="lg-fil"></i>光丝：调用越多，越亮越粗</span></div>
+ </section>
+ <aside class="panel" id="panel" aria-label="与管家对话">
+  <div class="p-head"><div class="av butler lg"><div id="pAv"></div></div><div><b>管家</b><span>说一句话，我来分派给机器人</span></div></div>
+  <div class="msgs" id="msgs"></div>
+  <div class="live"><div class="live-h"><i id="liveDot"></i>正在发生</div><ol id="live"><li class="empty">等待第一件事发生…</li></ol></div>
+  <form class="composer" id="composer" autocomplete="off"><input id="input" placeholder="告诉管家要做什么，比如：让小金看看热门话题" aria-label="给管家的消息"><button type="submit" aria-label="发送"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></form>
+ </aside>
+ <canvas id="fx" aria-hidden="true"></canvas>
+</main>
+<script src="../characters/oy-character.js"></script>
+<script src="../core/agent-stream.js"></script><script src="../core/demo-team.js"></script>
+<script>
+(function () {
+'use strict';
+const D = HallDemo, C = HallChar.COLORS, $ = s => document.querySelector(s);
+const RM = matchMedia('(prefers-reduced-motion: reduce)');
+const root = document.documentElement, main = $('#main'), stage = $('#stage');
+const web = $('#web'), fx = $('#fx'), wctx = web.getContext('2d'), fctx = fx.getContext('2d');
+const MODEL = { claude: 'Claude', gpt: 'GPT', gemini: 'Gemini', deepseek: 'DeepSeek', grok: 'Grok' };
+const GOLD = '#F5B83D', AMBER = '#F5A524', RED = '#F0443A';
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const now = () => new Date().toTimeString().slice(0, 5);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const dark = () => root.dataset.theme === 'dark';
+const rgba = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+const ICON = {
+  pages: '<rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8h8M8 12h5"/><circle cx="15.5" cy="15.5" r="2.4"/><path d="M17.3 17.3l1.7 1.7"/>',
+  materials: '<path d="M4 7.5 12 4l8 3.5-8 3.5z"/><path d="M4 12l8 3.5 8-3.5M4 16.5 12 20l8-3.5"/>',
+  workflows: '<circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="12" r="2.2"/><circle cx="6" cy="18" r="2.2"/><path d="M8.2 6H12a3 3 0 0 1 3 3v.8M8.2 18H12a3 3 0 0 0 3-3v-.8"/>',
+  phone: '<rect x="6.5" y="2.8" width="11" height="18.4" rx="2.8"/><path d="M10.5 17.6h3"/>',
+  dispatch: '<circle cx="12" cy="12.5" r="8"/><path d="M12 8.2v4.6l3 1.8M9.5 2.8h5"/>',
+  judge: '<path d="M12 3.5v17M5 8h14M5 8l-2.6 6a3 3 0 0 0 5.2 0zM19 8l-2.6 6a3 3 0 0 0 5.2 0zM8.5 20.5h7"/>',
+  data: '<path d="M4.5 20V10M10 20V4.5M15.5 20v-7M21 20H3"/>',
+  memory: '<path d="M5 4.5h10.5A3.5 3.5 0 0 1 19 8v11.5H8.5A3.5 3.5 0 0 1 5 16z"/><path d="M5 16a3.5 3.5 0 0 1 3.5-3.5H19M9 8h6"/>',
+};
+const ARROW = '<svg viewBox="0 0 12 12"><path d="M2 6h8M7 3l3 3-3 3"/></svg>';
+let themeLocked = /theme=(dark|light)/.test(location.search);
+function setTheme(t) { root.dataset.theme = t; buildStars(); }
+$('#themeBtn').onclick = () => { themeLocked = true; setTheme(dark() ? 'light' : 'dark'); };
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => { if (!themeLocked) setTheme(e.matches ? 'dark' : 'light'); });
+const TH = () => dark()
+  ? { star: '#DDE3FF', starA: .9, orbit: .1, ring: .16, fil: 1, comp: 'lighter', haze: [[GOLD, .11], ['#2EC4B6', .05]] }
+  : { star: '#8A7A55', starA: .32, orbit: .13, ring: .2, fil: .85, comp: 'source-over', haze: [[GOLD, .16], ['#2EC4B6', .05]] };
+
+/* ---------- geometry ---------- */
+const G = { w: 0, h: 0, ox: 0, oy: 0, sw: 0, sh: 0, cx: 0, cy: 0, Rx: 0, Ry: 0, disc: 96, char: 58, mob: false };
+function measure() {
+  const mr = main.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+  G.mob = innerWidth <= 760;
+  G.w = mr.width; G.h = Math.max(mr.height, main.scrollHeight);
+  G.ox = sr.left - mr.left; G.oy = sr.top - mr.top; G.sw = sr.width; G.sh = sr.height;
+  const top = G.mob ? 104 : 40, bottom = G.mob ? 30 : 58;
+  G.Ry = (G.sh - top - bottom) / 2 - 34;
+  G.Rx = Math.min(G.sw / 2 - (G.mob ? 34 : 70), G.Ry * (G.mob ? 1.12 : 1.62));
+  G.cx = G.sw / 2; G.cy = top + 34 + G.Ry - (G.mob ? 0 : 4);
+  G.disc = clamp(G.Ry * .36, 70, 112); G.char = clamp(G.Ry * .2, 40, 62);
+  [web, fx].forEach(c => { const r = devicePixelRatio || 1; c.width = G.w * r; c.height = G.h * r; c.style.width = G.w + 'px'; c.style.height = G.h + 'px'; c.getContext('2d').setTransform(r, 0, 0, r, 0, 0); });
+}
+/* ---------- depth field (static, seeded) ---------- */
+const starCv = document.createElement('canvas');
+function buildStars() {
+  const r = devicePixelRatio || 1, th = TH(); starCv.width = G.w * r; starCv.height = G.h * r;
+  const c = starCv.getContext('2d'); c.setTransform(r, 0, 0, r, 0, 0);
+  let s = 7; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const n = Math.round(G.w * G.h / (dark() ? 2600 : 5200));
+  for (let i = 0; i < n; i++) {
+    const x = rnd() * G.w, y = rnd() * G.h, z = rnd() ** 3, rad = .35 + z * 1.25;
+    c.globalAlpha = th.starA * (.18 + z * .7); c.fillStyle = th.star;
+    c.beginPath(); c.arc(x, y, rad, 0, 7); c.fill();
+    if (z > .72 && dark()) { c.globalAlpha = .08; c.beginPath(); c.arc(x, y, rad * 4, 0, 7); c.fill(); }
+  }
+  c.globalAlpha = 1;
+}
+
+/* ---------- stations ---------- */
+const ST = {};
+D.capabilities.forEach((cap, i) => {
+  const el = document.createElement('div'); el.className = 'st';
+  el.innerHTML = `<div class="st-ic"><svg viewBox="0 0 24 24">${ICON[cap.key]}</svg><span class="st-n"></span></div><div class="st-lb">${esc(cap.label)}</div><div class="st-hint">${esc(cap.hint)}</div>`;
+  $('#stations').appendChild(el);
+  ST[cap.key] = { cap, el, a: -Math.PI / 2 + i * Math.PI * 2 / D.capabilities.length, x: 0, y: 0, n: 0 };
+});
+function placeStations() {
+  Object.values(ST).forEach(s => {
+    s.x = G.cx + Math.cos(s.a) * G.Rx; s.y = G.cy + Math.sin(s.a) * G.Ry;
+    s.el.classList.toggle('lab-up', Math.sin(s.a) < -.3);
+    s.el.style.left = s.x + 'px'; s.el.style.top = s.y + 'px';
+    s.el.style.transform = Math.sin(s.a) < -.3 ? 'translate(-50%,calc(-100% + 20px))' : 'translate(-50%,-20px)';
+  });
+}
+
+/* ---------- core / butler ---------- */
+const core = $('#core'), disc = core.querySelector('.disc'); let butler = null, bSize = 0;
+function placeCore() {
+  core.style.left = G.cx + 'px'; core.style.top = G.cy + 'px';
+  disc.style.width = disc.style.height = G.disc + 'px';
+  const sz = Math.round(G.disc * .6);
+  if (sz !== bSize) { bSize = sz; butler && butler.destroy(); butler = HallChar.mount($('#butler'), { model: 'boss', color: -1, emotion: 'idle', size: sz, name: '管家' }); }
+}
+let coreTimer = 0;
+function coreSay(text, emo, hold) {
+  const st = $('#coreStatus'); st.textContent = text; st.classList.add('hot');
+  butler && butler.setEmotion(HallChar.EMOTION[emo] || emo);
+  disc.classList.add('pulse'); setTimeout(() => disc.classList.remove('pulse'), 260);
+  clearTimeout(coreTimer);
+  coreTimer = setTimeout(() => { st.textContent = '待命'; st.classList.remove('hot'); butler && butler.setEmotion(HallChar.EMOTION.idle); }, hold || 2600);
+}
+/* ---------- robots on orbits ---------- */
+const START = [-.52, 3.6, 2.45, 4.45, 1.18, .42], PERIOD = [74, 92, 110, 128, 146, 164];
+const BOTS = D.bots.map((b, i) => {
+  const el = document.createElement('div'); el.className = 'bot ' + b.state;
+  el.style.setProperty('--c', C[b.color]); el.setAttribute('tabindex', '0'); el.setAttribute('aria-label', b.name);
+  el.innerHTML = `<div class="bot-in"><div class="bot-body"><i class="bot-halo"></i><i class="beacon"></i><i class="beacon b2"></i><span class="flag">等你处理</span><div class="ch"></div></div><div class="bot-name"><i></i>${esc(b.name)}<em></em></div></div>`;
+  $('#bots').appendChild(el);
+  const o = { b, i, el, body: el.querySelector('.bot-body'), host: el.querySelector('.ch'), em: el.querySelector('.bot-name em'),
+    state: b.state, a: START[i], v: 0, x: 0, y: 0, k: 1, hover: false, eng: null, size: 0, uses: {} };
+  el.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hover(o, true); });
+  el.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hover(o, false); });
+  el.addEventListener('focus', () => hover(o, true)); el.addEventListener('blur', () => hover(o, false));
+  el.addEventListener('click', e => { e.stopPropagation(); hover(o, !o.hover); });
+  return o;
+});
+const BY = id => BOTS.find(o => o.b.id === id);
+function mountBots() {
+  BOTS.forEach(o => {
+    const sz = Math.round(G.char); if (sz === o.size) return; o.size = sz;
+    o.eng && o.eng.destroy();
+    o.eng = HallChar.mount(o.host, { model: o.b.model, color: o.b.color, emotion: D.STATE_EMOTION[o.state], size: sz, name: o.b.name });
+    o.body.querySelectorAll('.beacon').forEach(x => { x.style.width = x.style.height = sz * 1.05 + 'px'; });
+  });
+}
+function ring(i) {   // orbit radii between the core and the station ring
+  const f = G.mob ? .47 + i * .068 : .5 + i * .085, rx = G.Rx * f + (G.mob ? -6 : 0), ry = G.Ry * (f + .02);
+  return { rx, ry };
+}
+function orbitPos(o) {
+  const { rx, ry } = ring(o.i), s = Math.sin(o.a);
+  o.x = G.cx + Math.cos(o.a) * rx; o.y = G.cy + s * ry; o.k = .9 + .12 * (s + 1) / 2;
+}
+function placeBot(o) {
+  o.el.style.transform = `translate3d(${o.x.toFixed(1)}px,${o.y.toFixed(1)}px,0) scale(${o.k.toFixed(3)})`;
+  o.el.style.zIndex = o.hover ? 9 : (5 + Math.round((o.y - G.cy) / 40) + 4);
+}
+const LABEL = D.STATE_LABEL;
+function setState(o, s) {
+  if (o.state === s) return; o.state = s;
+  o.el.className = 'bot ' + s + (o.hover ? ' hover' : '');
+  o.eng && o.eng.setEmotion(HallChar.EMOTION[D.STATE_EMOTION[s]]);
+  o.em.textContent = s === 'error' ? LABEL[s] : '';
+  summary(); if (o.hover) renderCard(o);
+}
+function emote(o, emo, ms) {
+  if (!o.eng) return; o.eng.setEmotion(HallChar.EMOTION[emo]);
+  clearTimeout(o.et); o.et = setTimeout(() => o.eng.setEmotion(HallChar.EMOTION[D.STATE_EMOTION[o.state]]), ms || 1800);
+}
+function bump(o) { o.body.classList.remove('bump'); void o.body.offsetWidth; o.body.classList.add('bump'); }
+function summary() {
+  const n = s => BOTS.filter(o => o.state === s).length, parts = [`${BOTS.length} 个机器人`];
+  if (n('working')) parts.push(`<b style="color:var(--green)">${n('working')} 个工作中</b>`);
+  if (n('waiting')) parts.push(`<b style="color:var(--amber)">${n('waiting')} 个等你处理</b>`);
+  if (n('error')) parts.push(`<b style="color:var(--red)">${n('error')} 个没有响应</b>`);
+  $('#summary').innerHTML = parts.join(' · ');
+}
+/* ---------- network memory: filaments built only from real events ---------- */
+const FIL = new Map();          // 'botId|cap' → { n, flash }
+const SPOKE = new Map();        // botId → { n, flash }  (core ↔ robot)
+const P = (x, y) => ({ x: x + G.ox, y: y + G.oy });
+function curve(c, a, b, bend) {
+  const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, dx = b.x - a.x, dy = b.y - a.y;
+  const q = { x: mx - dy * bend, y: my + dx * bend };
+  c.moveTo(a.x, a.y); c.quadraticCurveTo(q.x, q.y, b.x, b.y); return q;
+}
+function drawWeb(dt) {
+  const th = TH(), c = wctx;
+  c.clearRect(0, 0, G.w, G.h); c.drawImage(starCv, 0, 0, G.w, G.h);
+  const o0 = P(G.cx, G.cy);
+  th.haze.forEach(([col, a], j) => {
+    const r = (j ? 1.25 : .62) * G.Rx, g = c.createRadialGradient(o0.x, o0.y, 0, o0.x, o0.y, r);
+    g.addColorStop(0, rgba(col, a)); g.addColorStop(1, rgba(col, 0)); c.fillStyle = g; c.fillRect(0, 0, G.w, G.h);
+  });
+  // station ring: dotted
+  c.save(); c.setLineDash([1.5, 7]); c.lineCap = 'round'; c.lineWidth = 1.4; c.strokeStyle = dark() ? `rgba(255,255,255,${th.ring})` : `rgba(30,25,10,${th.ring})`;
+  c.beginPath(); c.ellipse(o0.x, o0.y, G.Rx, G.Ry, 0, 0, 7); c.stroke(); c.restore();
+  // orbit rings in identity colour, lit arc trails a moving robot
+  BOTS.forEach(o => {
+    const { rx, ry } = ring(o.i), col = C[o.b.color], live = o.state !== 'paused';
+    c.lineWidth = 1; c.strokeStyle = rgba(col, live ? th.orbit * 1.6 : th.orbit * .6);
+    c.beginPath(); c.ellipse(o0.x, o0.y, rx, ry, 0, 0, 7); c.stroke();
+    if (o.state === 'working') {
+      const len = .9, steps = 18;
+      for (let s = 0; s < steps; s++) {
+        const a1 = o.a - len * s / steps, a2 = o.a - len * (s + 1) / steps;
+        c.strokeStyle = rgba(col, (dark() ? .55 : .5) * (1 - s / steps)); c.lineWidth = 2;
+        c.beginPath(); c.ellipse(o0.x, o0.y, rx, ry, 0, a2, a1); c.stroke();
+      }
+    }
+  });
+  c.globalCompositeOperation = th.comp;
+  // core ↔ robot spokes
+  SPOKE.forEach((s, id) => {
+    const o = BY(id); if (!o) return; s.flash = Math.max(0, s.flash - dt * .6);
+    const w = .6 + Math.min(s.n, 8) * .28, a = (.1 + Math.min(s.n, 8) * .03 + s.flash * .5) * th.fil;
+    c.strokeStyle = rgba(GOLD, a); c.lineWidth = w + s.flash * 1.5;
+    c.beginPath(); curve(c, o0, P(o.x, o.y), .12); c.stroke();
+  });
+  // robot ↔ station filaments
+  FIL.forEach((f, key) => {
+    const [id, cap] = key.split('|'), o = BY(+id), st = ST[cap]; if (!o || !st) return;
+    f.flash = Math.max(0, f.flash - dt * .55);
+    const a = P(o.x, o.y), b = P(st.x, st.y), m = Math.min(f.n, 10);
+    const g = c.createLinearGradient(a.x, a.y, b.x, b.y), col = C[o.b.color];
+    const al = (.16 + m * .06 + f.flash * .55) * th.fil;
+    g.addColorStop(0, rgba(col, al)); g.addColorStop(1, rgba(col, al * .45));
+    c.strokeStyle = g; c.lineWidth = .8 + m * .45 + f.flash * 2; c.lineCap = 'round';
+    c.beginPath(); curve(c, a, b, .14); c.stroke();
+    if (dark() && m > 2) { c.lineWidth = 4 + m * 1.2; c.strokeStyle = rgba(col, .035 * m); c.beginPath(); curve(c, a, b, .14); c.stroke(); }
+  });
+  c.globalCompositeOperation = 'source-over';
+}
+/* ---------- comets ---------- */
+const COMETS = [], BURSTS = [];
+const at = { core: () => P(G.cx, G.cy), bot: o => () => P(o.x, o.y), st: k => () => P(ST[k].x, ST[k].y) };
+function panelPt(sel) {
+  const mr = main.getBoundingClientRect(), r = $(sel).getBoundingClientRect();
+  return () => ({ x: r.left - mr.left + 40, y: clamp(r.bottom - mr.top - 30, 60, G.h - 40) });
+}
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function comet(from, to, col, opt) {
+  opt = opt || {};
+  if (RM.matches) { burst(to(), col); setTimeout(() => opt.done && opt.done(), 60); return; }
+  COMETS.push({ from, to, col, t0: performance.now() + (opt.delay || 0), dur: opt.dur || 1150, bend: opt.bend == null ? .18 : opt.bend, done: opt.done });
+}
+function burst(p, col) { BURSTS.push({ x: p.x, y: p.y, col, t0: performance.now() }); }
+function pt(a, q, b, t) { const u = 1 - t; return { x: u * u * a.x + 2 * u * t * q.x + t * t * b.x, y: u * u * a.y + 2 * u * t * q.y + t * t * b.y }; }
+function drawFx(tn) {
+  const c = fctx, th = TH(); c.clearRect(0, 0, G.w, G.h); c.globalCompositeOperation = th.comp; c.lineCap = 'round';
+  for (let i = COMETS.length - 1; i >= 0; i--) {
+    const m = COMETS[i], raw = (tn - m.t0) / m.dur; if (raw < 0) continue;
+    const a = m.from(), b = m.to(), dx = b.x - a.x, dy = b.y - a.y;
+    const q = { x: (a.x + b.x) / 2 - dy * m.bend, y: (a.y + b.y) / 2 + dx * m.bend };
+    const t = ease(Math.min(raw, 1)), tail = .26, N = 22;
+    for (let s = 0; s < N; s++) {
+      const t1 = t - tail * s / N, t2 = t - tail * (s + 1) / N; if (t1 <= 0) break;
+      const p1 = pt(a, q, b, t1), p2 = pt(a, q, b, Math.max(0, t2)), k = 1 - s / N;
+      c.strokeStyle = rgba(m.col, .9 * k * k); c.lineWidth = .6 + 3.2 * k;
+      c.beginPath(); c.moveTo(p1.x, p1.y); c.lineTo(p2.x, p2.y); c.stroke();
+    }
+    const h = pt(a, q, b, t), g = c.createRadialGradient(h.x, h.y, 0, h.x, h.y, 14);
+    g.addColorStop(0, dark() ? 'rgba(255,255,255,.95)' : rgba(m.col, .95)); g.addColorStop(.25, rgba(m.col, .7)); g.addColorStop(1, rgba(m.col, 0));
+    c.fillStyle = g; c.beginPath(); c.arc(h.x, h.y, 14, 0, 7); c.fill();
+    if (raw >= 1) { COMETS.splice(i, 1); burst(b, m.col); m.done && m.done(); }
+  }
+  for (let i = BURSTS.length - 1; i >= 0; i--) {
+    const s = BURSTS[i], k = (tn - s.t0) / 700; if (k >= 1) { BURSTS.splice(i, 1); continue; }
+    const e = 1 - Math.pow(1 - k, 3);
+    c.strokeStyle = rgba(s.col, .7 * (1 - k)); c.lineWidth = 2 * (1 - k) + .5;
+    c.beginPath(); c.arc(s.x, s.y, 6 + e * 26, 0, 7); c.stroke();
+  }
+  c.globalCompositeOperation = 'source-over';
+}
+
+/* ---------- frame loop ---------- */
+let last = performance.now(), card = null;
+function frame(tn) {
+  const dt = Math.min(.05, (tn - last) / 1000); last = tn;
+  BOTS.forEach(o => {
+    const target = (o.state === 'working' && !o.hover && !RM.matches) ? Math.PI * 2 / PERIOD[o.i] : 0;
+    o.v += (target - o.v) * Math.min(1, dt * 2.2); o.a += o.v * dt;
+    orbitPos(o); placeBot(o);
+  });
+  if (card) placeCard(card);
+  drawWeb(dt); drawFx(tn);
+  requestAnimationFrame(frame);
+}
+/* ---------- event handling: every motion comes from here ---------- */
+function useStation(o, key) {
+  const st = ST[key], k = o.b.id + '|' + key, f = FIL.get(k) || { n: 0, flash: 0 };
+  f.n += 1; f.flash = 1; FIL.set(k, f);
+  o.uses[key] = (o.uses[key] || 0) + 1; st.n += 1;
+  st.el.classList.add('used'); st.el.querySelector('.st-n').textContent = st.n;
+  const ic = st.el.querySelector('.st-ic'); ic.style.setProperty('--c', C[o.b.color]); ic.style.setProperty('--nk', o.b.color === 4 ? '#2A1F00' : '#fff'); ic.style.setProperty('--g', Math.min(1, .25 + st.n * .08));
+  st.el.classList.remove('hit'); void st.el.offsetWidth; st.el.classList.add('hit');
+  setTimeout(() => st.el.classList.remove('hit'), 900);
+  if (o.hover) renderCard(o);
+}
+function spoke(o) { const s = SPOKE.get(o.b.id) || { n: 0, flash: 0 }; s.n += 1; s.flash = 1; SPOKE.set(o.b.id, s); }
+function delegate(o, text) {
+  coreSay('分派给' + o.b.name, 'thinking', 1800);
+  comet(at.core, at.bot(o), GOLD, { done: () => { spoke(o); setState(o, 'working'); emote(o, 'happy', 1500); bump(o); } });
+}
+function onEvent(ev) {
+  const o = BY(ev.bot); if (!o) return;
+  live(ev, o);
+  const col = C[o.b.color];
+  if (ev.kind === 'delegate') delegate(o, ev.text);
+  else if (ev.kind === 'use') {
+    if (o.state !== 'working' && o.state !== 'error') setState(o, 'working');
+    emote(o, 'busy', 1400);
+    comet(at.bot(o), at.st(ev.cap), col, { dur: 1000, done: () => useStation(o, ev.cap) });
+  } else if (ev.kind === 'report') {
+    emote(o, 'done', 2400);
+    comet(at.bot(o), at.core, col, { done: () => {
+      spoke(o); coreSay('收到' + o.b.name + '的汇报', 'happy', 2200); setState(o, 'idle');
+      comet(at.core, panelPt('#msgs'), GOLD, { bend: -.12, dur: 950, done: () => addMsg({ from: 'butler', text: ev.text, time: ev.at, relay: o }) });
+    } });
+  } else if (ev.kind === 'ask') {
+    setState(o, 'waiting');
+    comet(at.bot(o), at.core, AMBER, { done: () => {
+      coreSay(o.b.name + '需要你确认', 'waiting', 2600);
+      comet(at.core, panelPt('#msgs'), AMBER, { bend: -.12, dur: 950, done: () => askYou(o, ev) });
+    } });
+  } else if (ev.kind === 'error') {
+    setState(o, 'error'); burst(P(o.x, o.y), RED); setTimeout(() => burst(P(o.x, o.y), RED), 260);
+  }
+}
+const liveEl = $('#live');
+function live(ev, o) {
+  const name = esc(o.b.name), ar = ARROW;
+  const route = { delegate: `管家${ar}${name}`, use: `${name}${ar}${esc((D.cap(ev.cap) || {}).label || '')}`, report: `${name}${ar}管家`, ask: `${name}${ar}你`, error: name }[ev.kind];
+  const li = document.createElement('li'); li.className = 'k-' + ev.kind; li.style.setProperty('--c', ev.kind === 'error' ? RED : C[o.b.color]);
+  li.innerHTML = `<span class="r"><i></i>${route}</span><span class="t">${esc(ev.text)}</span><time>${esc(ev.at || now())}</time>`;
+  const empty = liveEl.querySelector('.empty'); empty && empty.remove();
+  liveEl.prepend(li); while (liveEl.children.length > 5) liveEl.lastChild.remove();
+  const d = $('#liveDot'); d.classList.add('on'); clearTimeout(live.t); live.t = setTimeout(() => d.classList.remove('on'), 1200);
+}
+/* ---------- conversation ---------- */
+const msgs = $('#msgs'), ENG = [];
+function avatar(host, model, color, size) { ENG.push(HallChar.mount(host, { model, color, emotion: 'idle', size, lite: true })); }
+function scroll() { requestAnimationFrame(() => { msgs.scrollTop = msgs.scrollHeight; }); }
+function addMsg(m) {
+  const row = document.createElement('div'), bot = m.from === 'bot' ? BY(m.bot) : null;
+  row.className = 'm ' + (m.from === 'bot' ? 'mb' : m.from);
+  if (m.from === 'you') row.innerHTML = `<div><div class="who" style="justify-content:flex-end">你 <em>${esc(m.time || now())}</em></div><div class="bub">${esc(m.text)}</div></div>`;
+  else {
+    if (bot) row.style.setProperty('--c', C[bot.b.color]);
+    const who = bot ? bot.b.name : '管家';
+    row.innerHTML = `<div class="av ${bot ? 'ab' : 'butler'}"><div></div></div><div class="col"><div class="who">${esc(who)} <em>${esc(m.time || now())}</em></div><div class="bub">${esc(m.text)}</div>${m.relay ? `<div class="relay">来自${esc(m.relay.b.name)}的汇报</div>` : ''}</div>`;
+    const h = row.querySelector('.av > div');
+    bot ? avatar(h, bot.b.model, bot.b.color, 24) : avatar(h, 'boss', -1, 20);
+  }
+  msgs.appendChild(row);
+  while (msgs.children.length > 40) msgs.firstChild.remove();
+  scroll(); return row;
+}
+function confirmCard(row, o, what) {
+  const c = document.createElement('div'); c.className = 'confirm';
+  c.innerHTML = `<div class="cf-h"><i></i><span>需要你确认</span></div><div class="cf-t">${esc(what)}</div><div class="cf-s">${esc(o.b.name)} · ${esc(o.b.account)}</div><div class="cf-b"><button class="go">确认</button><button class="no">先不</button></div>`;
+  row.querySelector('.col').appendChild(c); o.card = c;
+  c.querySelector('.go').onclick = () => resolve(o, c, true, what);
+  c.querySelector('.no').onclick = () => resolve(o, c, false, what);
+  scroll(); return c;
+}
+function resolve(o, c, yes, what) {
+  c.classList.add('done'); c.querySelector('.cf-h span').textContent = yes ? '已确认' : '已暂缓';
+  c.querySelector('.cf-b').remove(); o.card = null;
+  addMsg({ from: 'you', text: yes ? '确认，' + what + '。' : '先不要' + what + '。' });
+  setTimeout(() => {
+    if (yes) {
+      addMsg({ from: 'butler', text: `好的，已让${o.b.name}去${what}。` });
+      comet(panelPt('#msgs'), at.core, GOLD, { bend: .12, dur: 800, done: () => delegate(o) });
+      live({ kind: 'delegate', text: what, at: now() }, o);
+    } else { addMsg({ from: 'butler', text: `好的，${o.b.name}先不动，等你再说。` }); setState(o, 'idle'); }
+  }, 420);
+}
+function askYou(o, ev) {
+  if (o.card) { o.card.classList.add('flash'); setTimeout(() => o.card && o.card.classList.remove('flash'), 900); o.card.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
+  const row = addMsg({ from: 'butler', text: `${o.b.name}问：${ev.text}`, time: ev.at });
+  confirmCard(row, o, ev.text.replace(/吗？?$/, ''));
+}
+$('#composer').addEventListener('submit', e => {
+  e.preventDefault();
+  const inp = $('#input'), text = inp.value.trim(); if (!text) return; inp.value = '';
+  addMsg({ from: 'you', text });
+  const named = BOTS.find(o => text.includes(o.b.name)), ok = o => o && o.state !== 'error' && o.state !== 'paused';
+  const pick = ok(named) ? named : (BOTS.find(o => o.state === 'idle') || BOTS.find(o => o.state === 'working' && o !== named) || BOTS[0]);
+  const reply = named && !ok(named) ? `${named.b.name}现在${LABEL[named.state]}，这件事先交给${pick.b.name}。` : `好的，交给${pick.b.name}去做。`;
+  coreSay('正在理解', 'thinking', 1400);
+  comet(panelPt('#msgs'), at.core, dark() ? '#F2F1EE' : '#17171A', { bend: .12, dur: 800, done: () => {
+    addMsg({ from: 'butler', text: reply });
+    live({ kind: 'delegate', text, at: now() }, pick);
+    delegate(pick);
+  } });
+});
+
+/* ---------- hover card ---------- */
+const cardEl = $('#card');
+function hover(o, on) {
+  if (on && card && card !== o) hover(card, false);
+  o.hover = on; o.el.classList.toggle('hover', on);
+  card = on ? o : (card === o ? null : card);
+  if (on) renderCard(o); cardEl.classList.toggle('show', !!card);
+}
+stage.addEventListener('click', () => { if (card) hover(card, false); });
+function renderCard(o) {
+  const b = o.b, [used, max] = b.budget, caps = Object.entries(o.uses).sort((x, y) => y[1] - x[1]);
+  cardEl.style.setProperty('--c', C[b.color]);
+  cardEl.innerHTML = `<div class="c-top"><b>${esc(b.name)}</b><span class="model">${MODEL[b.model] || b.model}</span><span class="pill ${o.state}">${LABEL[o.state]}</span></div>
+   <div class="c-acc">${esc(b.account)}</div>
+   <div class="c-sec"><div class="c-k">当前步骤</div><div class="c-step">${esc(b.step)}</div></div>
+   <div class="c-sec"><div class="c-row"><span class="c-k" style="margin:0">今日预算</span><span>${used} / ${max}</span></div><div class="bar"><i style="width:${Math.round(used / max * 100)}%"></i></div></div>
+   <div class="c-sec"><div class="c-k">本次用过的能力</div><div class="chips">${caps.length ? caps.map(([k, n]) => `<span>${esc(D.cap(k).label)}<em>${n}</em></span>`).join('') : '<span class="none">还没有调用</span>'}</div></div>`;
+}
+function placeCard(o) {
+  const w = cardEl.offsetWidth, h = cardEl.offsetHeight, off = G.char * .62 + 18;
+  const flip = o.x + off + w > G.sw - 8; cardEl.classList.toggle('flip', flip);
+  const x = flip ? o.x - off - w : o.x + off, y = clamp(o.y - h / 2, 8, G.sh - h - 8);
+  cardEl.style.left = clamp(x, 8, G.sw - w - 8) + 'px'; cardEl.style.top = y + 'px';
+}
+
+/* ---------- boot ---------- */
+function layout() { measure(); buildStars(); placeStations(); placeCore(); mountBots(); BOTS.forEach(o => { orbitPos(o); placeBot(o); }); }
+BOTS.forEach(o => { o.em.textContent = o.state === 'error' ? LABEL[o.state] : ''; });
+avatar($('#pAv'), 'boss', -1, 26);
+D.conversation.forEach(m => {
+  const row = addMsg(m);
+  if (m.confirm) { const o = BOTS.find(x => m.text.includes(x.b.name)) || BY(3); confirmCard(row, o, m.confirm); }
+});
+layout(); summary();
+let rz = 0; addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(layout); });
+new ResizeObserver(() => { if (Math.abs(main.scrollHeight - G.h) > 2 || Math.abs(main.getBoundingClientRect().width - G.w) > 2) layout(); }).observe(main);
+requestAnimationFrame(frame);
+D.on(onEvent); D.start();
+})();
+</script>
+</body>
+</html>

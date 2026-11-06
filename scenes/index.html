@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OyVerse · 场景</title>
+<style>
+  :root { --bg:#f5f5f7; --ink:#1d1d1f; --muted:#6e6e73; --line:#e3e3e8; --card:#fff; color-scheme: light; }
+  :root[data-theme='dark'] { --bg:#111113; --ink:#f2f2f4; --muted:#9a9aa3; --line:#2c2c31; --card:#1c1c1f; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif; }
+  header { max-width: 1280px; margin: 0 auto; padding: 48px 32px 8px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  h1 { margin: 0; font-size: 30px; font-weight: 600; letter-spacing: -0.02em; }
+  header p { margin: 6px 0 0; color: var(--muted); max-width: 64ch; }
+  .toggle { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 7px 14px; font: inherit; cursor: pointer; }
+  main { max-width: 1280px; margin: 0 auto; padding: 24px 32px 64px; display: grid; gap: 28px; grid-template-columns: repeat(auto-fill, minmax(560px, 1fr)); }
+  a.option { display: grid; gap: 14px; color: inherit; text-decoration: none; }
+  .shot { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--card); aspect-ratio: 16 / 10; transition: translate .18s cubic-bezier(.22,1,.36,1), box-shadow .18s cubic-bezier(.22,1,.36,1); }
+  .shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; opacity: 0; transition: opacity .3s; }
+  .shot img.on { opacity: 1; }
+  .shot .pending { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); }
+  a.option:hover .shot { translate: 0 -3px; box-shadow: 0 18px 40px -22px rgba(0,0,0,.35); }
+  .meta { display: flex; gap: 14px; align-items: baseline; }
+  .meta b { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .meta span { color: var(--muted); }
+  .meta em { margin-left: auto; font-style: normal; font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; }
+  .option p { margin: -6px 0 0; color: var(--muted); }
+  footer { max-width: 1280px; margin: 0 auto; padding: 0 32px 48px; color: var(--muted); font-size: 13px; }
+  @media (max-width: 640px) { main { grid-template-columns: 1fr; padding: 16px; } header { padding: 28px 16px 0; } }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>OyVerse · 场景</h1>
+    <p>同一套 Agent 角色、同一条事件流，五种可视化场景。每个场景都可交互：事件自动播放，在输入框里说一句话就会派活。换成你自己的事件流，场景照常工作。</p>
+  </div>
+  <button class="toggle" type="button" id="theme">切换夜间</button>
+</header>
+<main id="grid"></main>
+<footer>每个场景都支持日 / 夜（右上角切换或 <code>?theme=dark</code>）和手机宽度。接入自己的数据见 <a href="../docs/protocol.md">事件协议</a>。</footer>
+<script>
+const OPTIONS = [
+  ['a', 'constellation.html', 'A · 星系', '最有冲击力', '管家是中心发光的核，机器人沿各自身份色的轨道运行，能力是外圈的站点。派活、用工具、汇报都是彗星划过，用得越多的连接会留下越亮的光丝。'],
+  ['b', 'mission-control.html', 'B · 指挥中心', '信息最全', '像 F1 遥测或发射控制台：每个机器人一块监控屏（角色、手机画面、正在用的能力），上方是信号路由，下方是每个机器人的事件时间线。'],
+  ['c', 'isometric-office.html', 'C · 等距办公室', '最有温度', '一层 2.5D 的办公室：每个机器人一张亮着屏幕的桌子，页面库是书架、素材库是作品墙、工作流是流水线。事件是沿着地板光路跑的光包。'],
+  ['d', 'neural-flow.html', 'D · 神经流', '最像神经网络', '你 → 管家 → 机器人 → 能力，四层对齐。连接是按真实使用量变宽的丝带，活跃时有粒子流动，节点被触发时像神经元一样亮一下。'],
+  ['e', 'conversation-river.html', 'E · 对话河流', '最好懂', '对话是主干，工作从你说的话分叉出去：每个机器人一条泳道，步骤是带能力图标的珠子，结果再流回对话里。一眼看清“我说的话 → 发生了什么”。'],
+];
+const grid = document.getElementById('grid');
+const root = document.documentElement;
+let dark = new URLSearchParams(location.search).get('theme') === 'dark' || (!location.search.includes('theme=') && matchMedia('(prefers-color-scheme: dark)').matches);
+function render() {
+  root.dataset.theme = dark ? 'dark' : 'light';
+  document.getElementById('theme').textContent = dark ? '切换日间' : '切换夜间';
+  grid.innerHTML = OPTIONS.map(([key, file, name, tag, text]) => `<a class="option" href="${file}?theme=${dark ? 'dark' : 'light'}">
+    <div class="shot"><span class="pending">截图加载中</span><img alt="${name} 截图" src="shots/${file.replace('.html', '')}${dark ? '-dark' : ''}.png" onload="this.classList.add('on');this.previousElementSibling.remove()"></div>
+    <div class="meta"><b>${name}</b><em>${tag}</em></div>
+    <p>${text}</p>
+  </a>`).join('');
+}
+document.getElementById('theme').onclick = () => { dark = !dark; render(); };
+render();
+</script>
+</body>
+</html>
