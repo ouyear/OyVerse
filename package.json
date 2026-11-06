@@ -1,0 +1,13 @@
+{
+  "name": "oyverse",
+  "private": true,
+  "type": "module",
+  "description": "Agent characters, an event protocol and visual scenes. The pages need nothing; this file only drives the GIF recorder.",
+  "license": "MIT",
+  "scripts": {
+    "record": "node tools/record.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.56.0"
+  }
+}

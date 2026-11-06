@@ -49,4 +49,4 @@ c.destroy();
 
 ## 新增一个角色外形
 
-在 `oy-character.js` 的角色部分里：`registerShapes()` 注册身体轮廓（极坐标函数生成 240 个点），`MODELS` 加一项（名称、`shape`、默认色、腮红色），`ACC` 加它的饰物（SVG 片段，随身体姿态变换）。然后在图鉴里检查 9 种状态。
+在 `oy-character.js` 的角色部分里：`registerShapes()` 注册身体轮廓（极坐标函数生成 240 个点），`MODELS` 加一项（名称、`shape`、默认色、腮红色），`ACC` 加它的饰物（SVG 片段，随身体姿态变换）。然后在 `../registry.js` 的 `characters` 里加一项（`id`、`name`、`look`、默认 `color`），在图鉴里检查 9 种状态，最后 `npm run record -- --only=<id>,lineup` 重录它的 GIF 和角色合影。

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OyVerse · 角色舞台</title>
+<style>
+  /* A clean stage for one character or a lineup, used for recording previews (tools/record.mjs) and for embedding. */
+  :root { --bg:#f5f5f7; --ink:#1d1d1f; --muted:#6e6e73; }
+  :root[data-theme='dark'] { --bg:#111113; --ink:#f2f2f4; --muted:#9a9aa3; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font: 14px/1.4 -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif; }
+  .stage { display: flex; height: 100%; align-items: center; justify-content: center; gap: 28px; }
+  figure { display: grid; justify-items: center; gap: 8px; margin: 0; }
+  figcaption { display: grid; justify-items: center; }
+  figcaption b { font-size: 15px; font-weight: 600; }
+  figcaption small { color: var(--muted); font-size: 12px; transition: opacity .2s; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage"></div>
+<script src="../registry.js"></script>
+<script src="oy-character.js"></script>
+<script>
+  // ?c=claude,gpt (default: every character) · ?size=120 · ?theme=dark · ?labels=0 · ?cycle=0 (stay in ?state=)
+  // ?states=thinking,working (default: registry showcaseStates) · ?every=1600 (ms per state)
+  const q = new URLSearchParams(location.search);
+  const ids = (q.get('c') || OyRegistry.characters.map(c => c.id).join(',')).split(',');
+  const size = Number(q.get('size') || 120);
+  const labels = q.get('labels') !== '0';
+  const states = q.get('states') ? q.get('states').split(',') : OyRegistry.showcaseStates;
+  const every = Number(q.get('every') || 1600);
+  const LABEL = { idle: '空闲', thinking: '思考', working: '工作中', waiting: '等你处理', done: '完成', happy: '开心', error: '出错', paused: '暂停', busy: '忙碌' };
+  document.documentElement.dataset.theme = q.get('theme') === 'dark' ? 'dark' : 'light';
+  const stage = document.getElementById('stage');
+  const cast = ids.map(id => OyRegistry.characters.find(c => c.id === id)).filter(Boolean).map(entry => {
+    const figure = document.createElement('figure');
+    figure.innerHTML = `<div></div>${labels ? `<figcaption><b>${entry.name}</b><small></small></figcaption>` : ''}`;
+    stage.appendChild(figure);
+    const character = OyCharacter.create(figure.firstElementChild, { character: entry.id, color: entry.color, state: q.get('state') || states[0], size, name: entry.name });
+    return { character, caption: figure.querySelector('small') };
+  });
+  let step = 0;
+  const show = () => cast.forEach(({ character, caption }) => {
+    const state = q.get('state') || states[step % states.length];
+    character.setState(state);
+    if (caption) caption.textContent = LABEL[state] || state;
+  });
+  show();
+  // 1.6s per state by default: long enough for each expression's own animation to play out.
+  if (q.get('cycle') !== '0') setInterval(() => { step += 1; show(); }, every);
+  window.OyStage = { stateCount: states.length, intervalMs: every };
+</script>
+</body>
+</html>

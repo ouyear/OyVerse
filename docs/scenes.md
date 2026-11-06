@@ -21,4 +21,4 @@
 
 ## 新增一个场景
 
-复制最接近的场景，或者从空白 HTML 开始：引入 `../characters/oy-character.js`、`../core/agent-stream.js`、`../core/demo-team.js`，订阅 `OyDemo.on(...)`，调用 `OyDemo.start()`。在 `scenes/index.html` 的 `OPTIONS` 里加一行，在 `scenes/shots/` 放日 / 夜截图。现成的提示词见 [prompts.md](prompts.md)。
+复制最接近的场景，或者从空白 HTML 开始：引入 `../characters/oy-character.js`、`../core/agent-stream.js`、`../core/demo-team.js`，订阅 `OyDemo.on(...)`，调用 `OyDemo.start()`。然后在 `../registry.js` 的 `scenes` 里加一项（`id`、`file`、`name`、`tag`、`text`），在 `scenes/shots/` 放 `<id>.png` / `<id>-dark.png`，最后 `npm run record -- --only=<id>` 生成 `media/scene-<id>.gif`。GIF 超过 2 MB 时，在清单里给它设 `seconds`（默认 8）或 `colors`（默认 96）。现成的提示词见 [prompts.md](prompts.md)。

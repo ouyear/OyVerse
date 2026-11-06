@@ -36,7 +36,7 @@ characters/oy-character.js 原样引入（作为静态脚本或复制进项目�
 请在 scenes/ 新建【场景名】.html，创意是：【一句话描述，比如“像地铁线路图：每个 Agent 一条线路，能力是换乘站”】。
 要求：角色只用 OyCharacter；所有动画只由 OyDemo.on() 收到的事件驱动；顶栏 + 舞台 + 右侧对话面板（对话不能挡住舞台）；
 支持 ?theme=dark、390px 宽度和 prefers-reduced-motion；不加载任何外部资源。
-完成后在 scenes/index.html 的 OPTIONS 里加一行，并用无头浏览器截 1440×900 日 / 夜两张图放进 scenes/shots/。
+完成后在 registry.js 的 scenes 里加一项，用无头浏览器截 1440×900 日 / 夜两张图放进 scenes/shots/，再运行 npm run record -- --only=<id> 生成 GIF。
 截图后自己看一遍，修掉遮挡、裁切和文字压线的问题再交付。
 ```
 
@@ -47,7 +47,7 @@ characters/oy-character.js 原样引入（作为静态脚本或复制进项目�
 
 请新增一个角色外形：【名字、外形描述、饰物描述】。
 在 characters/oy-character.js 的角色部分注册身体轮廓、在 MODELS 和 ACC 里各加一项，不要改 Grok Ball 引擎本身和顶部的许可声明。
-然后打开 characters/index.html，确认新角色在全部状态和 8 种身份色下都正常，眼睛不被饰物挡住。
+在 registry.js 的 characters 里加一项，然后打开 characters/index.html，确认新角色在全部状态和 8 种身份色下都正常，眼睛不被饰物挡住，最后运行 npm run record -- --only=<id>,lineup。
 ```
 
 ## 5. 只用角色，不要场景
